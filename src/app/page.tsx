@@ -1,65 +1,91 @@
-import Image from "next/image";
+import Link from "next/link";
+import Hero from "../../components/Hero/Hero";
+import GameSection from "../../components/GameSection/GameSection";
+import GameCard from "../../components/GameCard/GameCard";
+import SubFooter from "../../components/SubFooter/SubFooter";
+import { GetHomeData, GetHeroBanners } from "@/API/route.services";
+import { resolveCoverImage } from "@/lib/gameImages";
 
-export default function Home() {
+export default async function Home() {
+  const home = await GetHomeData();
+  const banners = home?.heroBanners?.length ? home.heroBanners : await GetHeroBanners();
+  const categories = (home?.categories ?? []).slice(0, 8);
+  const flashSale = home?.flashSale;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <>
+      <Hero banners={banners} />
+
+      {flashSale && flashSale.games.length > 0 ? (
+        <section className="gx-section gx-flash">
+          <div className="container">
+            <div className="gx-section__head">
+              <div>
+                <h2 className="section-title">Flash Sale</h2>
+                <p className="section-subtitle">{flashSale.title}</p>
+              </div>
+              <Link href="/deals" className="gx-section__link">
+                All deals
+              </Link>
+            </div>
+            <GameCard gameDetails={flashSale.games.map((item) => item.game)} />
+          </div>
+        </section>
+      ) : null}
+
+      {categories.length > 0 ? (
+        <section className="gx-section">
+          <div className="container">
+            <div className="gx-section__head">
+              <div>
+                <h2 className="section-title">Browse Categories</h2>
+                <p className="section-subtitle">Find games by the worlds you love to play</p>
+              </div>
+              <Link href="/categories" className="gx-section__link">
+                All categories
+              </Link>
+            </div>
+            <div className="gx-category-grid">
+              {categories.map((category) => (
+                <Link key={category.id || category.slug} href={`/categories/${category.slug}`} className="gx-category-card">
+                  <img
+                    src={resolveCoverImage(null, category.id, category.name, category.name)}
+                    alt={category.name}
+                  />
+                  <span>{category.name}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      <GameSection
+        title="Featured Games"
+        subtitle="Hand-picked titles ready for instant delivery"
+        href="/games?featured=true"
+        games={home?.featuredGames ?? []}
+      />
+      <GameSection
+        title="Trending Now"
+        subtitle="What players are adding to their libraries"
+        href="/games?trending=true"
+        games={home?.trendingGames ?? []}
+      />
+      <GameSection
+        title="New Releases"
+        subtitle="Fresh drops and latest launches"
+        href="/games?newReleases=true"
+        games={home?.newReleases ?? []}
+      />
+      <GameSection
+        title="Top Rated"
+        subtitle="Highest rated games on GameX"
+        href="/games?sort=highest_rating"
+        games={home?.topRated ?? []}
+      />
+
+      <SubFooter />
+    </>
   );
 }
