@@ -71,15 +71,22 @@ export default function GameForm({
   }
 
   async function upload(kind: "cover" | "gallery", fileList: FileList | null) {
-    if (!game || !fileList?.length) return;
+    if (!game || !fileList?.length || pending) return;
+    setPending(true);
     const formData = new FormData();
     if (kind === "cover") formData.append("cover", fileList[0]);
     else Array.from(fileList).forEach((file) => formData.append("gallery", file));
-    const result = kind === "cover"
-      ? await UploadGameCoverAction(game.id, formData)
-      : await UploadGameGalleryAction(game.id, formData);
-    if (result.success) toast.success(result.message ?? "Uploaded");
-    else toast.error(result.message ?? "Upload failed");
+    try {
+      const result = kind === "cover"
+        ? await UploadGameCoverAction(game.id, formData)
+        : await UploadGameGalleryAction(game.id, formData);
+      if (result.success) toast.success(result.message ?? "Uploaded");
+      else toast.error(result.message ?? "Upload failed");
+    } catch {
+      toast.error("Upload failed");
+    } finally {
+      setPending(false);
+    }
   }
 
   return (
@@ -107,15 +114,15 @@ export default function GameForm({
         <div className="gx-filters__row">
           <label className="gx-btn gx-btn--ghost">
             Upload cover
-            <input type="file" accept="image/*" hidden onChange={(event) => upload("cover", event.target.files)} />
+            <input type="file" accept="image/*" hidden disabled={pending} onChange={(event) => upload("cover", event.target.files)} />
           </label>
           <label className="gx-btn gx-btn--ghost">
             Upload gallery
-            <input type="file" accept="image/*" multiple hidden onChange={(event) => upload("gallery", event.target.files)} />
+            <input type="file" accept="image/*" multiple hidden disabled={pending} onChange={(event) => upload("gallery", event.target.files)} />
           </label>
         </div>
       ) : null}
-      <button type="submit" className="gx-btn gx-btn--primary" disabled={pending}>
+      <button type="submit" className="gx-btn gx-btn--primary p-2!" disabled={pending}>
         {pending ? "Saving..." : game ? "Update game" : "Create game"}
       </button>
     </form>

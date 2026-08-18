@@ -66,18 +66,22 @@ export default function UsersClient({
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <article className="rounded-xl border border-white/6 bg-[#15151a] p-5">
+
+        <article className="rounded-xl border border-white/6 bg-[#15151a] p-4!">
           <p className="text-xs uppercase text-zinc-400">Total</p>
           <p className="mt-2 text-2xl font-extrabold text-white">{total}</p>
         </article>
-        <article className="rounded-xl border border-white/6 bg-[#15151a] p-5">
+
+        <article className="rounded-xl border border-white/6 bg-[#15151a] p-4!">
           <p className="text-xs uppercase text-zinc-400">Admins on page</p>
           <p className="mt-2 text-2xl font-extrabold text-white">{admins}</p>
         </article>
-        <article className="rounded-xl border border-white/6 bg-[#15151a] p-5">
+
+        <article className="rounded-xl border border-white/6 bg-[#15151a] p-4!">
           <p className="text-xs uppercase text-zinc-400">Blocked on page</p>
           <p className="mt-2 text-2xl font-extrabold text-white">{blocked}</p>
         </article>
+
       </div>
 
       <div className="flex flex-wrap gap-3">
@@ -85,18 +89,18 @@ export default function UsersClient({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search by name, email or username"
-          className="h-11 min-w-[240px] flex-1 rounded-lg border border-white/6 bg-[#15151a] px-4 text-sm text-white"
+          className="h-11 min-w-[240px] flex-1 rounded-lg border border-white/6 bg-[#15151a] px-4! text-sm text-white"
         />
         <select
           value={roleFilter}
           onChange={(event) => setRoleFilter(event.target.value)}
-          className="h-11 rounded-lg border border-white/6 bg-[#15151a] px-4 text-sm text-white"
+          className="h-11 rounded-lg border border-white/6 bg-[#15151a] px-4! text-sm text-white"
         >
           <option value="">All roles</option>
           <option value="user">User</option>
           <option value="admin">Admin</option>
         </select>
-        <button type="button" className="gx-btn gx-btn--primary" onClick={applyFilters}>
+        <button type="button" className="gx-btn gx-btn--primary px-4!" onClick={applyFilters}>
           Apply
         </button>
       </div>

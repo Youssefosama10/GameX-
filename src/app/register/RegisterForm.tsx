@@ -1,7 +1,7 @@
 "use client"
 import Link from 'next/link';
 import { useState } from 'react'
-import { FormState, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { RegisterObjectType, RegisterSchema } from './Register.schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { RegisterAvtion } from './Register.Actions';
@@ -85,38 +85,27 @@ export default function RegisterForm() {
  } )
 
 
-// base URL = https://game-x-flax.vercel.app/api/v1/
-
-
 async function MyhandleSubmit( valuefromRegister : RegisterObjectType )
  {
+  if (isLoding) return;
+
   setIsLoading(true)
 
- const isRegisterSuccessfuly = await RegisterAvtion( valuefromRegister )
+  try {
+    const isRegisterSuccessfuly = await RegisterAvtion( valuefromRegister )
 
- if( isRegisterSuccessfuly.success )
- {
-   
-
-
-  toast.success(`${isRegisterSuccessfuly.message}`)
-  setTimeout(() => {
-   router.push("/login")
-  }, 2000);
- 
-
-
-  
-} else {
-
-    toast.error(isRegisterSuccessfuly.message)
-   
- }
- setIsLoading(false)
-  
-
-  console.log("value from Register from" , valuefromRegister);
-  
+    if( isRegisterSuccessfuly.success )
+    {
+      toast.success(`${isRegisterSuccessfuly.message}`)
+      setTimeout(() => {
+        router.push("/login")
+      }, 2000);
+    } else {
+      toast.error(isRegisterSuccessfuly.message)
+    }
+  } finally {
+    setIsLoading(false)
+  }
  }
 
   return (
@@ -274,26 +263,22 @@ async function MyhandleSubmit( valuefromRegister : RegisterObjectType )
                 />
                 <label htmlFor="agree-terms" className="checkbox-label">
                   I agree to the{" "}
-                  <Link href="/terms">Terms of Service</Link>{" "}
+                  <Link href="#">Terms of Service</Link>{" "}
                   and{" "}
-                  <Link href="/privacy">Privacy Policy</Link>
+                  <Link href="#">Privacy Policy</Link>
                 </label>
               </div>
 
               {/* Submit */}
-              { isLoding ? <button
+              <button
                 id="create-account-btn"
                 type="submit"
                 className="btn-primary"
+                disabled={isLoding}
+                aria-busy={isLoding}
               >
-                Creating... 
-              </button> : <button
-                id="create-account-btn"
-                type="submit"
-                className="btn-primary"
-              >
-                Create Account
-              </button> }
+                {isLoding ? "Creating..." : "Create Account"}
+              </button>
 
               <p className="login-link">
                 Already have an account?{" "}

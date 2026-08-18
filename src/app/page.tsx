@@ -3,18 +3,17 @@ import Hero from "../../components/Hero/Hero";
 import GameSection from "../../components/GameSection/GameSection";
 import GameCard from "../../components/GameCard/GameCard";
 import SubFooter from "../../components/SubFooter/SubFooter";
-import { GetHomeData, GetHeroBanners } from "@/API/route.services";
+import { GetHomeData } from "@/API/route.services";
 import { resolveCoverImage } from "@/lib/gameImages";
 
 export default async function Home() {
   const home = await GetHomeData();
-  const banners = home?.heroBanners?.length ? home.heroBanners : await GetHeroBanners();
   const categories = (home?.categories ?? []).slice(0, 8);
   const flashSale = home?.flashSale;
 
   return (
     <>
-      <Hero banners={banners} />
+      <Hero />
 
       {flashSale && flashSale.games.length > 0 ? (
         <section className="gx-section gx-flash">

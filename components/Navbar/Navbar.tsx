@@ -6,6 +6,9 @@ import { useState, useEffect, useRef } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAppCounts } from "@/app/_Context/AppCountsContext";
+import { ADMIN_PROFILE_AVATAR } from "@/lib/adminAvatar";
+
+const USER_PROFILE_AVATAR = "/games/Proflie-one.png";
 
 /* ─── Icons ─────────────────────────────────────── */
 const SearchIcon = () => (
@@ -82,6 +85,7 @@ export default function Navbar() {
   const isAdmin = session?.user?.role === "admin";
   const userName = session?.user?.name ?? "";
   const userEmail = session?.user?.email ?? "";
+  const avatarSrc = isAdmin ? ADMIN_PROFILE_AVATAR : USER_PROFILE_AVATAR;
   const initials = userName ? userName.slice(0, 2).toUpperCase() : "G";
 
   const { cartCount, wishlistCount } = useAppCounts();
@@ -207,7 +211,7 @@ export default function Navbar() {
                 >
                   <div className="nb-user-btn__avatar">
                     <Image
-                      src="https://i.pravatar.cc/150?img=12"
+                      src={avatarSrc}
                       alt={userName}
                       width={32}
                       height={32}
@@ -225,7 +229,7 @@ export default function Navbar() {
                     <div className="nb-dropdown__header">
                       <div className="nb-dropdown__avatar">
                         <Image
-                          src="https://i.pravatar.cc/150?img=12"
+                          src={avatarSrc}
                           alt={userName}
                           width={40}
                           height={40}

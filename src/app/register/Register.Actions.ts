@@ -18,7 +18,7 @@ export async function RegisterAvtion(valuefromRegister: RegisterObjectType) {
     });
     return await RequestRegister.json();
   } catch (error) {
-    console.log("error register", error);
+    console.error("error register", error);
     return { success: false, message: "Registration failed" };
   }
 }

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { CancelOrderAction, RefundOrderAction, UpdateOrderStatusAction } from "@/API/actions";
 import type { Order } from "@/API/types";
@@ -21,14 +22,23 @@ export default function AdminOrdersClient({
   status: string;
 }) {
   const router = useRouter();
+  const [pendingId, setPendingId] = useState<string | null>(null);
 
-  async function run(action: () => Promise<{ success: boolean; message?: string }>) {
-    const result = await action();
-    if (result.success) {
-      toast.success(result.message ?? "Updated");
-      router.refresh();
-    } else {
-      toast.error(result.message ?? "Action failed");
+  async function run(id: string, action: () => Promise<{ success: boolean; message?: string }>) {
+    if (pendingId) return;
+    setPendingId(id);
+    try {
+      const result = await action();
+      if (result.success) {
+        toast.success(result.message ?? "Updated");
+        router.refresh();
+      } else {
+        toast.error(result.message ?? "Action failed");
+      }
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setPendingId(null);
     }
   }
 
@@ -75,8 +85,9 @@ export default function AdminOrdersClient({
                 <td>{formatMoney(order.total)}</td>
                 <td>
                   <select
-                    defaultValue={order.status || "pending"}
-                    onChange={(event) => run(() => UpdateOrderStatusAction(order.id, event.target.value))}
+                    value={order.status || "pending"}
+                    disabled={pendingId === order.id}
+                    onChange={(event) => run(order.id, () => UpdateOrderStatusAction(order.id, event.target.value))}
                     className="rounded bg-[#0b0a10] px-2 py-1 text-sm"
                   >
                     {STATUSES.map((value) => (
@@ -86,10 +97,20 @@ export default function AdminOrdersClient({
                 </td>
                 <td>{formatDate(order.createdAt)}</td>
                 <td className="flex gap-2">
-                  <button type="button" className="gx-btn gx-btn--ghost" onClick={() => run(() => CancelOrderAction(order.id))}>
+                  <button
+                    type="button"
+                    className="gx-btn gx-btn--ghost"
+                    disabled={pendingId === order.id}
+                    onClick={() => run(order.id, () => CancelOrderAction(order.id))}
+                  >
                     Cancel
                   </button>
-                  <button type="button" className="gx-btn gx-btn--ghost" onClick={() => run(() => RefundOrderAction(order.id))}>
+                  <button
+                    type="button"
+                    className="gx-btn gx-btn--ghost"
+                    disabled={pendingId === order.id}
+                    onClick={() => run(order.id, () => RefundOrderAction(order.id))}
+                  >
                     Refund
                   </button>
                 </td>

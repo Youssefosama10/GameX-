@@ -2,11 +2,19 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import type { HeroBanner } from "@/API/types";
+import { LOCAL_HERO_IMAGES } from "@/lib/gameImages";
 
-export default function Hero({ banners }: { banners: HeroBanner[] }) {
-  const slides = banners.filter((banner) => banner.backgroundImage || banner.title);
+/** Mirrors the promotional copy drawn inside each banner, which is otherwise
+ *  unavailable to screen readers. */
+const SLIDE_ALT: Record<string, string> = {
+  "/games/slider-one.png": "Enter the Dark Realm - legends aren't born, they're forged",
+  "/games/slider-tow.png": "Live to play - Cyber Racer - speed, style, supremacy",
+  "/games/slider-three.png": "Rise beyond the limits - new worlds, epic battles, your legacy",
+  "/games/slider-Four.png": "Gear up for victory - elite gear, legendary performance",
+};
+
+export default function Hero() {
+  const slides = LOCAL_HERO_IMAGES;
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -17,78 +25,47 @@ export default function Hero({ banners }: { banners: HeroBanner[] }) {
     return () => window.clearInterval(timer);
   }, [slides.length]);
 
-  if (slides.length === 0) {
-    return (
-      <section className="gx-hero">
-        <div className="gx-hero__fallback" />
-        <div className="gx-hero__content">
-          <span className="gx-hero__badge">GameX Store</span>
-          <h1>Your next adventure starts here</h1>
-          <p>Browse premium digital games with instant delivery and exclusive deals.</p>
-          <Link href="/games" className="gx-btn gx-btn--primary gx-btn--lg">
-            Browse Games
-          </Link>
-        </div>
-      </section>
-    );
-  }
-
-  const current = slides[index];
-
   return (
     <section className="gx-hero">
-      {slides.map((banner, slideIndex) => (
-        <div
-          key={banner.id || slideIndex}
-          className={`gx-hero__slide ${slideIndex === index ? "is-active" : ""}`}
-        >
-          {banner.backgroundImage ? (
+      <div className="gx-hero__stage">
+        {slides.map((image, slideIndex) => (
+          <div
+            key={image}
+            className={`gx-hero__slide ${slideIndex === index ? "is-active" : ""}`}
+          >
             <Image
-              src={banner.backgroundImage}
-              alt={banner.title}
+              src={image}
+              alt={SLIDE_ALT[image] ?? ""}
               fill
               priority={slideIndex === 0}
               className="gx-hero__image"
               sizes="100vw"
             />
-          ) : null}
-        </div>
-      ))}
-      <div className="gx-hero__overlay" />
-      <div className="gx-hero__content">
-        {current.subtitle ? <span className="gx-hero__badge">{current.subtitle}</span> : null}
-        <h1>{current.title}</h1>
-        {current.description ? <p>{current.description}</p> : null}
-        <div className="gx-hero__actions">
-          <Link href={current.buttonLink || "/games"} className="gx-btn gx-btn--primary gx-btn--lg">
-            {current.buttonText || "Shop Now"}
-          </Link>
-          <Link href="/deals" className="gx-btn gx-btn--ghost gx-btn--lg">
-            View Deals
-          </Link>
-        </div>
-      </div>
-      {slides.length > 1 ? (
-        <div className="gx-hero__nav">
-          <button type="button" onClick={() => setIndex((index - 1 + slides.length) % slides.length)} aria-label="Previous banner">
-            ‹
-          </button>
-          <div className="gx-hero__dots">
-            {slides.map((banner, slideIndex) => (
-              <button
-                key={banner.id || slideIndex}
-                type="button"
-                className={slideIndex === index ? "is-active" : ""}
-                onClick={() => setIndex(slideIndex)}
-                aria-label={`Go to slide ${slideIndex + 1}`}
-              />
-            ))}
           </div>
-          <button type="button" onClick={() => setIndex((index + 1) % slides.length)} aria-label="Next banner">
-            ›
-          </button>
-        </div>
-      ) : null}
+        ))}
+        <div className="gx-hero__overlay" />
+        {slides.length > 1 ? (
+          <div className="gx-hero__nav">
+            <button type="button" onClick={() => setIndex((index - 1 + slides.length) % slides.length)} aria-label="Previous banner">
+              ‹
+            </button>
+            <div className="gx-hero__dots">
+              {slides.map((image, slideIndex) => (
+                <button
+                  key={image}
+                  type="button"
+                  className={slideIndex === index ? "is-active" : ""}
+                  onClick={() => setIndex(slideIndex)}
+                  aria-label={`Go to slide ${slideIndex + 1}`}
+                />
+              ))}
+            </div>
+            <button type="button" onClick={() => setIndex((index + 1) % slides.length)} aria-label="Next banner">
+              ›
+            </button>
+          </div>
+        ) : null}
+      </div>
     </section>
   );
 }

@@ -1,22 +1,33 @@
 import Link from "next/link";
+import { Library } from "lucide-react";
 import { GetLibrary } from "@/API/route.services";
 import { resolveCoverImage } from "@/lib/gameImages";
 import { formatDate } from "@/lib/format";
+import EmptyState from "@components/EmptyState/EmptyState";
 
 export const dynamic = "force-dynamic";
 
 export default async function LibraryPage() {
   const games = await GetLibrary();
+  const isEmpty = !games.length;
 
   return (
-    <div className="page-wrapper">
+    <div className={`page-wrapper${isEmpty ? " page-wrapper--empty" : ""}`}>
       <div className="container">
         <div className="gx-catalog__intro">
           <p className="gx-kicker">Owned games</p>
           <h1 className="section-title">My Library</h1>
           <p className="section-subtitle">License keys and downloads for everything you purchased.</p>
         </div>
-        {games.length ? (
+        {isEmpty ? (
+          <EmptyState
+            icon={Library}
+            title="Your library is empty"
+            description="Buy a game to unlock license keys and downloads."
+            ctaLabel="Browse games"
+            ctaHref="/games"
+          />
+        ) : (
           <div className="gx-category-grid gx-category-grid--full">
             {games.map((item) => (
               <Link key={item.id} href={`/library/${item.id}`} className="gx-category-card">
@@ -30,15 +41,6 @@ export default async function LibraryPage() {
                 </span>
               </Link>
             ))}
-          </div>
-        ) : (
-          <div className="empty-state">
-            <div className="empty-state-icon">📚</div>
-            <h3>Your library is empty</h3>
-            <p>Buy a game to unlock license keys and downloads.</p>
-            <Link href="/games" className="gx-btn gx-btn--primary">
-              Browse games
-            </Link>
           </div>
         )}
       </div>

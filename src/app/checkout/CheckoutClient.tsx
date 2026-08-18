@@ -22,6 +22,7 @@ export default function CheckoutClient({ cart }: { cart: userCart }) {
   const [couponCode, setCouponCode] = useState("");
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [pending, setPending] = useState(false);
+  const [couponPending, setCouponPending] = useState(false);
 
   const subtotal = cart.subtotal ?? cart.items.reduce((sum, item) => sum + toNumber(item.price) * (item.quantity ?? 1), 0);
   const discount = Math.max(cart.discount ?? 0, couponDiscount);
@@ -29,17 +30,26 @@ export default function CheckoutClient({ cart }: { cart: userCart }) {
   const total = Math.max(0, (cart.total ?? subtotal) - couponDiscount);
 
   async function applyCoupon() {
-    const result = await ValidateCouponAction(couponCode.trim(), subtotal);
-    if (result.success) {
-      const data = result.data as { discountAmount?: number; discount?: number } | undefined;
-      setCouponDiscount(data?.discountAmount ?? data?.discount ?? 0);
-      toast.success(result.message ?? "Coupon applied");
-    } else {
-      toast.error(result.message ?? "Invalid coupon");
+    if (couponPending || !couponCode.trim()) return;
+    setCouponPending(true);
+    try {
+      const result = await ValidateCouponAction(couponCode.trim(), subtotal);
+      if (result.success) {
+        const data = result.data as { discountAmount?: number; discount?: number } | undefined;
+        setCouponDiscount(data?.discountAmount ?? data?.discount ?? 0);
+        toast.success(result.message ?? "Coupon applied");
+      } else {
+        toast.error(result.message ?? "Invalid coupon");
+      }
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setCouponPending(false);
     }
   }
 
   async function placeOrder() {
+    if (pending) return;
     setPending(true);
     try {
       const result = await CheckoutAction(paymentMethod, couponCode.trim());
@@ -87,8 +97,8 @@ export default function CheckoutClient({ cart }: { cart: userCart }) {
               ))}
             </select>
             <input value={couponCode} onChange={(event) => setCouponCode(event.target.value)} placeholder="Coupon code" />
-            <button type="button" className="gx-btn gx-btn--ghost" onClick={applyCoupon}>
-              Apply coupon
+            <button type="button" className="gx-btn p-2! gx-btn--ghost" onClick={applyCoupon} disabled={couponPending || pending}>
+              {couponPending ? "Applying..." : "Apply coupon"}
             </button>
             <div className="flex justify-between text-sm text-zinc-400">
               <span>Subtotal</span>
@@ -111,7 +121,7 @@ export default function CheckoutClient({ cart }: { cart: userCart }) {
             <button type="button" className="gx-btn gx-btn--primary gx-btn--lg" onClick={placeOrder} disabled={pending}>
               {pending ? "Processing..." : "Place order"}
             </button>
-            <Link href="/cart" className="gx-btn gx-btn--ghost">
+            <Link href="/cart" className="gx-btn p-2! gx-btn--ghost">
               Back to cart
             </Link>
           </div>

@@ -1,7 +1,28 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { GetGameDetails, GetGameReviews, GetRelatedGames } from "@/API/route.services";
 import GameDetailsClient from "./GameDetailsClient";
 import ReviewsPanel from "./ReviewsPanel";
 import { resolveCoverImage, getGameThumbnails } from "@/lib/gameImages";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const game = await GetGameDetails(id);
+
+  if (!game) {
+    return { title: "Game not found — GameX" };
+  }
+
+  return {
+    title: `${game.title} — GameX`,
+    description:
+      game.shortDescription || game.description || `Buy ${game.title} on GameX.`,
+  };
+}
 
 export default async function GameDetails({
   params,
@@ -12,15 +33,7 @@ export default async function GameDetails({
   const gameDetailsObject = await GetGameDetails(slug);
 
   if (!gameDetailsObject) {
-    return (
-      <div className="page-wrapper">
-        <div className="empty-state">
-          <div className="empty-state-icon">🎮</div>
-          <h3>Game not found</h3>
-          <p>The game you are looking for could not be loaded.</p>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
   const related = gameDetailsObject.relatedGames?.length

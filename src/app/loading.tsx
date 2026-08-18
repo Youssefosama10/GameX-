@@ -1,5 +1,3 @@
-import GameCard from "../../components/GameCard/GameCard";
-
 export default function HomeLoading() {
   return (
     <section style={{ padding: "40px 24px", display: "flex", justifyContent: "center" }}>

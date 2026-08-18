@@ -20,7 +20,7 @@ export default async function AdminGamesPage({
           <h1 className="text-[28px] font-extrabold text-white">Games</h1>
           <p className="text-sm text-zinc-400">Create, update, archive, and restore catalog titles.</p>
         </div>
-        <Link href="/dashboard/games/new" className="gx-btn gx-btn--primary">
+        <Link href="/dashboard/games/new" className="gx-btn px-4! gx-btn--primary">
           Add game
         </Link>
       </div>

@@ -61,7 +61,7 @@ export default async function OrdersPage({
             <div className="empty-state-icon">📦</div>
             <h3>No orders yet</h3>
             <p>When you complete checkout, your orders will appear here.</p>
-            <Link href="/games" className="gx-btn gx-btn--primary">
+            <Link href="/games" className="gx-btn p-2! gx-btn--primary">
               Browse games
             </Link>
           </div>

@@ -89,7 +89,7 @@ export type DashboardNavItem = {
 export const dashboardAdmin: AdminProfileData = {
   name: "Admin",
   role: "Super Admin",
-  avatar: "/batman.png",
+  avatar: "/games/Proflie-one.png",
 };
 
 export const notificationCount = 8;

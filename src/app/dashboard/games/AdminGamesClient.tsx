@@ -24,14 +24,23 @@ export default function AdminGamesClient({
 }) {
   const router = useRouter();
   const [query, setQuery] = useState(search);
+  const [pendingId, setPendingId] = useState<string | null>(null);
 
-  async function run(action: () => Promise<{ success: boolean; message?: string }>) {
-    const result = await action();
-    if (result.success) {
-      toast.success(result.message ?? "Updated");
-      router.refresh();
-    } else {
-      toast.error(result.message ?? "Action failed");
+  async function run(id: string, action: () => Promise<{ success: boolean; message?: string }>) {
+    if (pendingId) return;
+    setPendingId(id);
+    try {
+      const result = await action();
+      if (result.success) {
+        toast.success(result.message ?? "Updated");
+        router.refresh();
+      } else {
+        toast.error(result.message ?? "Action failed");
+      }
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setPendingId(null);
     }
   }
 
@@ -42,18 +51,18 @@ export default function AdminGamesClient({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search games"
-          className="h-11 flex-1 rounded-lg border border-white/6 bg-[#15151a] px-4 text-sm text-white"
+          className="h-11 flex-1 rounded-lg border border-white/6 bg-[#15151a] px-4! text-sm text-white"
         />
         <button
           type="button"
-          className="gx-btn gx-btn--primary"
+          className="gx-btn gx-btn--primary px-4!"
           onClick={() => router.push(`/dashboard/games?search=${encodeURIComponent(query)}${isDeleted ? `&isDeleted=${isDeleted}` : ""}`)}
         >
           Search
         </button>
         <button
           type="button"
-          className="gx-btn gx-btn--ghost"
+          className="gx-btn p-2! gx-btn--ghost"
           onClick={() => router.push(isDeleted === "true" ? "/dashboard/games" : "/dashboard/games?isDeleted=true")}
         >
           {isDeleted === "true" ? "Show active" : "Show deleted"}
@@ -90,12 +99,22 @@ export default function AdminGamesClient({
                 <td>{game.isDeleted ? "Deleted" : game.isOutOfStock ? "Out of stock" : "Active"}</td>
                 <td className="flex gap-2">
                   {game.isDeleted ? (
-                    <button type="button" className="gx-btn gx-btn--ghost" onClick={() => run(() => RestoreAdminGameAction(game.id))}>
-                      Restore
+                    <button
+                      type="button"
+                      className="gx-btn gx-btn--ghost"
+                      disabled={pendingId === game.id}
+                      onClick={() => run(game.id, () => RestoreAdminGameAction(game.id))}
+                    >
+                      {pendingId === game.id ? "Working..." : "Restore"}
                     </button>
                   ) : (
-                    <button type="button" className="gx-btn gx-btn--ghost" onClick={() => run(() => DeleteAdminGameAction(game.id))}>
-                      Delete
+                    <button
+                      type="button"
+                      className="gx-btn gx-btn--ghost"
+                      disabled={pendingId === game.id}
+                      onClick={() => run(game.id, () => DeleteAdminGameAction(game.id))}
+                    >
+                      {pendingId === game.id ? "Working..." : "Delete"}
                     </button>
                   )}
                 </td>

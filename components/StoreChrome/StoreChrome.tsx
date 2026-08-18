@@ -11,12 +11,14 @@ export default function StoreChrome({
 }) {
   const pathname = usePathname();
   const isDashboard = pathname.startsWith("/dashboard");
+  const isForgotPassword = pathname === "/forgot-password";
+  const hideChrome = isDashboard || isForgotPassword;
 
   return (
     <>
-      {!isDashboard && <Navbar />}
+      {!hideChrome && <Navbar />}
       {children}
-      {!isDashboard && <Footer />}
+      {!hideChrome && <Footer />}
     </>
   );
 }

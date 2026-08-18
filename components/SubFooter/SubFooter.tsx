@@ -25,8 +25,8 @@ export default function SubFooter() {
         <div className="subfooter-card">
           <div className="subfooter-card__watermark">
             <Image
-              src="/games/GamesX-1.png"
-              alt="Gaming artwork"
+              src="/games/cards/adventure-1.png"
+              alt="GameX key artwork"
               fill
               sizes="(max-width: 768px) 320px, 380px"
               className="object-cover object-center"

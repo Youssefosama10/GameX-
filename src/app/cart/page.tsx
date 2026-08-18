@@ -1,5 +1,6 @@
-import Link from "next/link";
+import { ShoppingCart } from "lucide-react";
 import { GetUserCart } from "@/API/route.services";
+import EmptyState from "@components/EmptyState/EmptyState";
 import CartClient from "./CartClient";
 import CartHero from "./CartHero";
 
@@ -10,17 +11,18 @@ export default async function CartPage() {
 
   if (!cart || cart.items.length === 0) {
     return (
-      <div className="page-wrapper cart-page">
+      <div className="page-wrapper cart-page page-wrapper--empty">
         <CartHero />
         <div className="container">
-          <div className="empty-state">
-            <div className="empty-state-icon">🛒</div>
-            <h3>Your cart is empty</h3>
-            <p>Discover premium games and add your favorites to start building your collection.</p>
-            <Link href="/" className="gx-btn gx-btn--primary gx-btn--lg">
-              Browse Games
-            </Link>
-          </div>
+          <EmptyState
+            icon={ShoppingCart}
+            title="Your cart is empty"
+            description="Discover premium games and add your favorites to start building your collection."
+            ctaLabel="Browse Games"
+            ctaHref="/games"
+            secondaryLabel="View Deals"
+            secondaryHref="/deals"
+          />
         </div>
       </div>
     );

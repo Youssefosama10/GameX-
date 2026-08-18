@@ -177,6 +177,7 @@ export default function GameDetailsClient({
               alt={game?.title || "Game details preview"}
               fill
               priority
+              sizes="(max-width: 900px) 100vw, 50vw"
               className="gd-main-img"
             />
             {discountNum > 0 && (
@@ -202,9 +203,9 @@ export default function GameDetailsClient({
             </div>
           </div>
 
-          {/* 4 Small Thumbnails Gallery Strip */}
+          {/* 6 Small Thumbnails Gallery Strip */}
           <div className="gd-thumbnails-row">
-            {thumbnails.slice(0, 4).map((thumbImg, idx) => (
+            {thumbnails.slice(0, 6).map((thumbImg, idx) => (
               <div
                 key={idx}
                 className={`gd-thumb-card ${activeThumbIndex === idx ? "active" : ""}`}
@@ -214,6 +215,7 @@ export default function GameDetailsClient({
                   src={thumbImg}
                   alt={`Thumbnail ${idx + 1}`}
                   fill
+                  sizes="80px"
                   className="gd-thumb-img"
                 />
                 {idx === 0 && (
@@ -613,6 +615,7 @@ export default function GameDetailsClient({
                         src={resolveCoverImage(null, relGame.id, relGame.title, relGame.genre)}
                         alt={relGame.title}
                         fill
+                        sizes="180px"
                         className="gd-mini-card-img"
                       />
                       {relGame.discount && (

@@ -176,6 +176,7 @@ export default function WishlistClient({ wishlist, suggestions = [] }: WishlistC
                         src={imageSrc}
                         alt={game.title}
                         fill
+                        sizes="(max-width: 768px) 100vw, 280px"
                         className="wl-card__image"
                       />
                     </Link>

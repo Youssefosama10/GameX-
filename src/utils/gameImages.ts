@@ -8,5 +8,7 @@ export {
   getGameImageForProduct,
   getGameThumbnails,
   LOCAL_GAME_IMAGES,
+  LOCAL_HERO_IMAGES,
   resolveCoverImage,
+  resolveHeroImage,
 } from "@/lib/gameImages";

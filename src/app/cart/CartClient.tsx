@@ -272,7 +272,7 @@ export default function CartClient({ cart }: CartClientProps) {
                   onChange={(event) => setCouponCode(event.target.value)}
                   placeholder="Coupon code"
                 />
-                <button type="button" className="gx-btn gx-btn--ghost" onClick={handleApplyCoupon} disabled={couponPending}>
+                <button type="button" className="gx-btn p-2! gx-btn--ghost" onClick={handleApplyCoupon} disabled={couponPending}>
                   {couponPending ? "Checking..." : "Apply coupon"}
                 </button>
               </div>
@@ -291,7 +291,7 @@ export default function CartClient({ cart }: CartClientProps) {
                 <Lock size={16} />
                 Proceed to Checkout
               </Link>
-              <button type="button" className="gx-btn gx-btn--ghost gx-btn--lg" onClick={handleClearCart} disabled={clearing}>
+              <button type="button" className="gx-btn  gx-btn--ghost gx-btn--lg" onClick={handleClearCart} disabled={clearing}>
                 {clearing ? "Clearing..." : "Clear cart"}
               </button>
               <Link href="/games" className="gx-btn gx-btn--ghost gx-btn--lg cart-continue-btn">

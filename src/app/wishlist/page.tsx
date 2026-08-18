@@ -1,5 +1,6 @@
-import Link from "next/link";
+import { Heart } from "lucide-react";
 import { GetAllGames, GetUserWishlist } from "@/API/route.services";
+import EmptyState from "@components/EmptyState/EmptyState";
 import WishlistClient from "./WishlistClient";
 import WishlistError from "./WishlistError";
 import WishlistHeader from "./WishlistHeader";
@@ -15,17 +16,18 @@ export default async function WishlistPage() {
 
   if (wishlist.items.length === 0) {
     return (
-      <div className="page-wrapper wishlist-page">
+      <div className="page-wrapper wishlist-page page-wrapper--empty">
         <div className="container">
           <WishlistHeader itemCount={0} />
-          <div className="empty-state">
-            <div className="empty-state-icon">💜</div>
-            <h3>Your wishlist is empty</h3>
-            <p>Save games you love and come back when you are ready to play.</p>
-            <Link href="/" className="gx-btn gx-btn--primary gx-btn--lg">
-              Explore Games
-            </Link>
-          </div>
+          <EmptyState
+            icon={Heart}
+            title="Your wishlist is empty"
+            description="Save games you love and come back when you are ready to play."
+            ctaLabel="Explore Games"
+            ctaHref="/games"
+            secondaryLabel="View Deals"
+            secondaryHref="/deals"
+          />
         </div>
       </div>
     );

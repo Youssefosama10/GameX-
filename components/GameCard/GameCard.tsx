@@ -79,6 +79,7 @@ export default function GameCard({ gameDetails }: { gameDetails: GamesCard[] }) 
                 src={imageSrc}
                 alt={product.title}
                 fill
+                sizes="(max-width: 768px) 100vw, 320px"
                 className="game-card__hero-img"
               />
               <div className="game-card__hero-overlay" />
@@ -177,10 +178,11 @@ export default function GameCard({ gameDetails }: { gameDetails: GamesCard[] }) 
                     src={imageSrc}
                     alt={product.title}
                     fill
+                    sizes="72px"
                     className="game-card__pricing-thumb-img"
                   />
                 </div>
-                <Link href={`/GameDetails/${product.slug}`}>
+                <Link href={`/GameDetails/${product.slug}`} className="game-card__view-link">
                   <button type="button" className="game-card__view-btn" aria-label="View details">
                     <FaChevronRight />
                   </button>

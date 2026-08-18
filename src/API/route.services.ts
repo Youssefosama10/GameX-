@@ -80,7 +80,7 @@ export async function GetGames(query: GamesQuery = {}): Promise<GamesListResult 
       ),
     };
   } catch (error) {
-    console.log("error from Games", error);
+    console.error("error from Games", error);
     return undefined;
   }
 }
@@ -115,7 +115,7 @@ export async function GetGameDetails(slug: string): Promise<GameDetails | undefi
     );
     return game;
   } catch (error) {
-    console.log("error GameDetails", error);
+    console.error("error GameDetails", error);
     return undefined;
   }
 }
@@ -152,7 +152,7 @@ export async function GetHomeData(): Promise<HomeData | undefined> {
       categories: normalizeCategories(data.categories),
     };
   } catch (error) {
-    console.log("error from GetHomeData", error);
+    console.error("error from GetHomeData", error);
     return undefined;
   }
 }
@@ -224,7 +224,7 @@ export async function GetUserCart(): Promise<userCart | undefined> {
     });
     return response.data;
   } catch (error) {
-    console.log("error from GetUserCart", error);
+    console.error("error from GetUserCart", error);
     return undefined;
   }
 }
@@ -237,7 +237,7 @@ export async function GetUserWishlist(): Promise<WishlistData | null> {
     });
     return normalizeWishlistData(response.data);
   } catch (error) {
-    console.log("error from GetUserWishlist", error);
+    console.error("error from GetUserWishlist", error);
     return null;
   }
 }
@@ -245,8 +245,8 @@ export async function GetUserWishlist(): Promise<WishlistData | null> {
 export async function GetNavbarCounts(): Promise<NavbarCounts> {
   try {
     const [cartResponse, wishlistResponse] = await Promise.allSettled([
-      apiFetch<userCart>("cart", { auth: true }),
-      apiFetch<RawWishlistData>("wishlist", { auth: true }),
+      apiFetch<userCart>("cart", { auth: true, tags: ["GetUserCart"] }),
+      apiFetch<RawWishlistData>("wishlist", { auth: true, tags: ["GetUserWishlist"] }),
     ]);
 
     const cartCount =
@@ -405,7 +405,7 @@ export async function GetDashboardStats(): Promise<DashboardStats | undefined> {
       latestOrders: normalizeOrders(data.latestOrders),
     };
   } catch (error) {
-    console.log("error from GetDashboardStats", error);
+    console.error("error from GetDashboardStats", error);
     return undefined;
   }
 }
@@ -435,7 +435,7 @@ export async function GetAllUsers(
       ),
     };
   } catch (error) {
-    console.log("error from GetAllUsers", error);
+    console.error("error from GetAllUsers", error);
     return undefined;
   }
 }

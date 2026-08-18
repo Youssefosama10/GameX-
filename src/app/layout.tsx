@@ -17,9 +17,23 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+function metadataBaseFromEnv(): URL | undefined {
+  const raw = process.env.NEXTAUTH_URL;
+  if (!raw) return undefined;
+  try {
+    return new URL(raw);
+  } catch {
+    return undefined;
+  }
+}
+
 export const metadata: Metadata = {
+  metadataBase: metadataBaseFromEnv(),
   title: "GameX — Your Ultimate Gaming Store",
   description: "Discover, buy and track your games on GameX — the ultimate digital gaming marketplace.",
+  icons: {
+    icon: "/games/img-X.png",
+  },
 };
 
 export default function RootLayout({

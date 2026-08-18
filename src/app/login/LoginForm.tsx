@@ -10,21 +10,11 @@ import { signIn } from 'next-auth/react';
 
 export default function LoginForm() {
   const [showPw, setShowPw] = useState(false);
-  const [password, setPassword] = useState("");
+  const [password] = useState("");
   const strength = getStrength(password);
   const [agreed, setAgreed] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [IsLoading, setIsLoading] = useState(false)
-  
 
-  function IconUser() {
-    return (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
-      </svg>
-    );
-  }
-  
   function IconMail() {
     return (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -55,7 +45,6 @@ export default function LoginForm() {
       </svg>
     );
   }
-  
 
   function strengthBarClass(barIdx: number, level: number) {
     if (level === 0 || barIdx > level) return "";
@@ -80,72 +69,38 @@ export default function LoginForm() {
 
  const router =  useRouter()
 
-
   const { handleSubmit , register , formState } = useForm<LoginObjectType>( {
     resolver : zodResolver(LoginSchema)
    } )
-  
 
-   async function MyhandleSubmit(datafromLogin : LoginObjectType)
+   async function MyhandleSubmit(datafromLogin : LoginObjectType) {
+    if (IsLoading) return;
 
+    setIsLoading(true);
 
-   
-   {
-    
-       setIsLoading(true)
+    try {
+      const SignInResponse = await signIn("credentials", {
+        redirect: false,
+        callbackUrl: "/",
+        ...datafromLogin,
+      });
 
-    const SignInResponse  = await signIn( 'credentials' , { redirect : false , callbackUrl : '/' , ...datafromLogin } )
-
-    if( SignInResponse?.ok ) 
-    {
-      toast.success("Welcome back — signed in successfully")
-      setTimeout(() => {
-        router.push("/")
-      }, 800);
-
-    }
-    else {
-      
-      toast.error("Invalid email or password")
-     
-    }
-    setIsLoading(false)
-      
-
-    //    setIsLoading(true)
-
-
-
-    // const isLoginSuccessfuly = await LoginAction(datafromLogin)
-
-    // if( isLoginSuccessfuly.success )
-    // // if( isLoginSuccessfuly )
-    // {
-    //   toast.success(isLoginSuccessfuly.message)
-    //   // toast.success("Account created Succesfuly")
-    //   setTimeout(() => {
-    //     router.push("/")
-    //   }, 2000);
-
-    // } else {
-
-    //   toast.error(isLoginSuccessfuly.message)
-    //   // toast.error("Account Already exist")
-    // }
-      
-    //     console.log("datafromLogin" , datafromLogin);
-        
-    //     setIsLoading(false)
+      if (SignInResponse?.ok) {
+        toast.success("Welcome back — signed in successfully");
+        setTimeout(() => {
+          router.push("/");
+        }, 800);
+      } else {
+        toast.error("Invalid email or password");
       }
-
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <>
-
 <form id="register-form" onSubmit={handleSubmit(MyhandleSubmit)} noValidate>
-              {/* Full name */}
-
-              {/* Email + Username row */}
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="email" className="form-label">Email Address</label>
@@ -154,7 +109,7 @@ export default function LoginForm() {
                     <input
                       id="email"
                       type="email"
-                      className="form-input w-[710]!"
+                      className="form-input w-[710px]!"
                       placeholder="Enter your email"
                       autoComplete="email"
                       {...register("email")}
@@ -163,20 +118,16 @@ export default function LoginForm() {
               { formState.errors.email && formState.touchedFields.email && <p className='text-red-500'>{formState.errors.email.message}</p> }
                 </div>
               </div>
-              {/* Password */}
               <div className="form-group">
                 <label htmlFor="password" className="form-label">Password</label>
                 <div className="input-wrap">
                   <span className="input-icon"><IconLock /></span>
                   <input
                     id="password"
-                    // name="password"
                     type={showPw ? "text" : "password"}
                     className="form-input"
                     placeholder="Create a password"
-                    // value={password}
-                    // onChange={(e) => setPassword(e.target.value)}
-                    autoComplete="new-password"
+                    autoComplete="current-password"
                     style={{ paddingRight: "44px" }}
                     { ...register("password") }
                   />
@@ -192,11 +143,10 @@ export default function LoginForm() {
                 </div>
                 { formState.errors.password && formState.touchedFields.password && <p className='text-red-500'>{formState.errors.password.message}</p> }
                 <div className="mt-2 text-right">
-                  <Link href="/forgot-password" className="text-sm text-violet-400 hover:text-violet-300">
+                  <Link href="/forgot-password" className="text-sm text-violet-400! hover:text-violet-300">
                     Forgot password?
                   </Link>
                 </div>
-                {/* Strength meter */}
                 {password && (
                   <div className="password-strength" role="status" aria-live="polite">
                     <p className="strength-label">
@@ -214,10 +164,6 @@ export default function LoginForm() {
                 )}
               </div>
 
-              {/* Confirm password */}
-        
-
-              {/* Terms */}
               <div className="checkbox-wrap">
                 <input
                   id="agree-terms"
@@ -228,30 +174,21 @@ export default function LoginForm() {
                 />
                 <label htmlFor="agree-terms" className="checkbox-label">
                   I agree to the{" "}
-                  <Link href="/terms">Terms of Service</Link>{" "}
+                  <Link href="#">Terms of Service</Link>{" "}
                   and{" "}
-                  <Link href="/privacy">Privacy Policy</Link>
+                  <Link href="#">Privacy Policy</Link>
                 </label>
               </div>
 
-              {/* Submit */}
-           { !IsLoading ?    <button
+              <button
                 id="create-account-btn"
                 type="submit"
                 className="btn-primary"
-                
+                disabled={IsLoading}
+                aria-busy={IsLoading}
               >
-                Login to GameX
-              </button> :    <button
-                id="create-account-btn"
-                type="submit"
-                className="btn-primary"
-                
-              >
-                loading
-              </button> }
-
-
+                {IsLoading ? "Signing in..." : "Login to GameX"}
+              </button>
 
               <p className="login-link">
               Dont have an accont ?

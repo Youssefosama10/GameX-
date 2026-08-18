@@ -24,6 +24,19 @@ interface AuthJwt extends JWT {
   error?: string;
 }
 
+interface LoginApiResponse {
+  success?: boolean;
+  data?: {
+    user?: {
+      fullName?: string;
+      email?: string;
+      role?: string;
+    };
+    accessToken?: string;
+    refreshToken?: string;
+  };
+}
+
 async function refreshJwtToken(token: AuthJwt): Promise<AuthJwt> {
   if (!token.refreshToken) {
     return { ...token, error: "RefreshTokenMissing" };
@@ -53,41 +66,52 @@ export const NextAuthConfig: NextAuthOptions = {
         password: { label: "password", placeholder: "Enter your password", type: "password" },
       },
       authorize: async function (credentials) {
-        const requestLogin = await fetch(buildApiUrl("auth/login"), {
-          method: "POST",
-          body: JSON.stringify(credentials),
-          headers: { "content-type": "application/json" },
-        });
+        const email = credentials?.email?.trim();
+        const password = credentials?.password;
 
-        const responesLogin = await requestLogin.json();
+        if (!email || !password) {
+          return null;
+        }
 
-        if (responesLogin.success) {
-          const { fullName, email, role } = responesLogin.data.user;
-          const accessToken = responesLogin.data.accessToken as string;
-          const refreshToken = responesLogin.data.refreshToken as string | undefined;
+        try {
+          const requestLogin = await fetch(buildApiUrl("auth/login"), {
+            method: "POST",
+            body: JSON.stringify({ email, password }),
+            headers: { "content-type": "application/json" },
+          });
+
+          const responesLogin = (await requestLogin.json()) as LoginApiResponse;
+
+          if (!responesLogin.success || !responesLogin.data?.accessToken || !responesLogin.data.user) {
+            return null;
+          }
+
+          const { fullName, email: userEmail, role } = responesLogin.data.user;
+          const accessToken = responesLogin.data.accessToken;
+          const refreshToken = responesLogin.data.refreshToken;
           const data = jwtDecode<{ id: string }>(accessToken);
 
           return {
-            name: fullName,
-            email,
+            name: fullName ?? "",
+            email: userEmail ?? email,
             id: data.id,
             userToken: accessToken,
             refreshToken,
             role: role as string,
             accessTokenExpires: getAccessTokenExpiry(accessToken),
           } satisfies AuthUser;
+        } catch {
+          return null;
         }
-
-        return null;
       },
     }),
   ],
 
   secret: process.env.NEXTAUTH_SECRET,
-
-  // jwt: {
-  //   maxAge: 60 * 60 * 24 * 3,
-  // },
+  session: {
+    strategy: "jwt",
+  },
+  useSecureCookies: process.env.NEXTAUTH_URL?.startsWith("https://") ?? false,
 
   pages: {
     signIn: "/login",
@@ -97,7 +121,6 @@ export const NextAuthConfig: NextAuthOptions = {
     jwt: async function ({ token, user }) {
       const authToken = token as AuthJwt;
 
-      
       if (user) {
         const authUser = user as AuthUser;
         authToken.RouteToken = authUser.userToken;
@@ -128,7 +151,6 @@ export const NextAuthConfig: NextAuthOptions = {
       }
 
       session.id = authToken.id;
-      session.userToken = authToken.RouteToken;
       session.error = authToken.error;
 
       return session;

@@ -1,25 +1,10 @@
 /**
  * Local GameX cover resolver.
  * Never uses remote API/Unsplash URLs. Same product.id + title + genre
- * always resolves to the same local artwork.
+ * always resolves to the same local AAA cover.
  */
 
-export const FALLBACK_GAME_IMAGE = "/games/GamesX-1.png";
-
-const FAMOUS_TITLES: { keywords: string[]; path: string }[] = [
-  { keywords: ["spider", "spiderman", "spider-man"], path: "/spiderman.png" },
-  { keywords: ["batman", "arkham"], path: "/batman.png" },
-  { keywords: ["god of war", "godofwar", "kratos"], path: "/games/god-of-war.png" },
-  { keywords: ["cyberpunk", "cyber punk", "night city"], path: "/games/cyberpunk-2077.png" },
-  { keywords: ["red dead", "redemption", "rdr"], path: "/games/red-dead-redemption.png" },
-  { keywords: ["elden ring", "elden"], path: "/games/elden-ring.png" },
-  { keywords: ["horizon", "forbidden west", "aloy"], path: "/games/horizon-forbidden-west.png" },
-  { keywords: ["ghost of tsushima", "tsushima"], path: "/games/ghost-of-tsushima.png" },
-  { keywords: ["resident evil", "re4", "leon"], path: "/games/resident-evil-4.png" },
-  { keywords: ["sekiro", "shadows die"], path: "/games/sekiro.png" },
-  { keywords: ["final fantasy", "ff16", "ff xvi", "clive"], path: "/games/final-fantasy-xvi.png" },
-  { keywords: ["witcher", "geralt"], path: "/games/witcher-3.png" },
-];
+export const FALLBACK_GAME_IMAGE = "/games/cards/action-1.png";
 
 export type ThemeKey =
   | "action"
@@ -35,27 +20,34 @@ export type ThemeKey =
   | "horror";
 
 export const THEME_PACKS: Record<ThemeKey, string[]> = {
-  action: ["/games/themes/action-1.png", "/games/themes/action-2.png", "/games/themes/action-3.png"],
-  adventure: ["/games/themes/adventure-1.png", "/games/themes/adventure-2.png", "/games/themes/adventure-3.png"],
-  rpg: ["/games/themes/rpg-1.png", "/games/themes/rpg-2.png", "/games/themes/rpg-3.png"],
-  racing: ["/games/themes/racing-1.png", "/games/themes/racing-2.png", "/games/themes/racing-3.png"],
-  shooter: ["/games/themes/shooter-1.png", "/games/themes/shooter-2.png", "/games/themes/shooter-3.png"],
-  strategy: ["/games/themes/strategy-1.png", "/games/themes/strategy-2.png", "/games/themes/strategy-3.png"],
-  sports: ["/games/themes/sports-1.png", "/games/themes/sports-2.png", "/games/themes/sports-3.png"],
-  puzzle: ["/games/themes/puzzle-1.png", "/games/themes/puzzle-2.png", "/games/themes/puzzle-3.png"],
-  fantasy: ["/games/themes/fantasy-1.png", "/games/themes/fantasy-2.png", "/games/themes/fantasy-3.png"],
-  scifi: ["/games/themes/scifi-1.png", "/games/themes/scifi-2.png", "/games/themes/scifi-3.png"],
-  horror: ["/games/themes/horror-1.png", "/games/themes/horror-2.png", "/games/themes/horror-3.png"],
+  action: ["/games/cards/action-1.png", "/games/cards/action-2.png"],
+  adventure: ["/games/cards/adventure-1.png", "/games/cards/adventure-2.png"],
+  rpg: ["/games/cards/rpg-1.png", "/games/cards/rpg-2.png"],
+  racing: ["/games/cards/racing-1.png", "/games/cards/racing-2.png"],
+  shooter: ["/games/cards/shooter-1.png", "/games/cards/shooter-2.png"],
+  strategy: ["/games/cards/strategy-1.png", "/games/cards/strategy-2.png"],
+  sports: ["/games/cards/sports-1.png", "/games/cards/sports-2.png"],
+  puzzle: ["/games/cards/puzzle-1.png", "/games/cards/puzzle-2.png"],
+  fantasy: ["/games/cards/fantasy-1.png", "/games/cards/fantasy-2.png"],
+  scifi: ["/games/cards/scifi-1.png", "/games/cards/scifi-2.png"],
+  horror: ["/games/cards/horror-1.png", "/games/cards/horror-2.png"],
 };
+
+export const LOCAL_HERO_IMAGES = [
+  "/games/slider-one.png",
+  "/games/slider-tow.png",
+  "/games/slider-three.png",
+  "/games/slider-Four.png",
+] as const;
 
 const TITLE_THEMES: { keywords: string[]; theme: ThemeKey }[] = [
   { theme: "fantasy", keywords: ["forest", "whisper", "dragon", "elf", "magic", "kingdom", "castle", "sword", "wizard", "mystic", "enchanted", "rune", "myth", "legend", "sorcer"] },
   { theme: "scifi", keywords: ["alien", "invasion", "space", "galaxy", "robot", "android", "orbital", "starship", "nebula", "cyber", "neon", "future", "colony", "mars", "lunar"] },
   { theme: "horror", keywords: ["horror", "haunted", "zombie", "nightmare", "fear", "blood", "undead", "evil", "terror", "curse", "occult"] },
-  { theme: "racing", keywords: ["race", "racing", "drift", "circuit", "grand prix", "speedway", "rally"] },
-  { theme: "shooter", keywords: ["shooter", "sniper", "ops", "warfare", "battlefield", "tactical"] },
+  { theme: "racing", keywords: ["race", "racing", "drift", "circuit", "grand prix", "speedway", "rally", "forza", "nfs"] },
+  { theme: "shooter", keywords: ["shooter", "sniper", "ops", "warfare", "battlefield", "tactical", "doom", "halo"] },
   { theme: "sports", keywords: ["football", "soccer", "basketball", "fifa", "nba", "tennis", "golf"] },
-  { theme: "puzzle", keywords: ["puzzle", "match", "block", "tile", "brain"] },
+  { theme: "puzzle", keywords: ["puzzle", "match", "block", "tile", "brain", "portal", "tetris"] },
   { theme: "strategy", keywords: ["strategy", "empire", "commander", "civilization", "tactics", "war room"] },
   { theme: "adventure", keywords: ["adventure", "quest", "expedition", "explorer", "island", "lost"] },
   { theme: "action", keywords: ["action", "combat", "fighter", "brawl", "assassin"] },
@@ -80,30 +72,34 @@ const GENRE_THEMES: Record<string, ThemeKey> = {
   fighting: "action",
   stealth: "action",
   platformer: "adventure",
+  superhero: "action",
+  "open-world": "adventure",
+  "open world": "adventure",
 };
 
-const ALL_THEME_IMAGES = Object.values(THEME_PACKS).flat();
-
 export const LOCAL_GAME_IMAGES = [
-  "/games/witcher-3.png",
-  "/games/batman_cover_1786239716380.png",
-  "/games/red-dead-redemption.png",
-  "/games/god-of-war.png",
-  "/games/cyberpunk-2077.png",
-  "/games/cyberpunk_cover_1786239783316.png",
-  "/games/final-fantasy-xvi.png",
-  "/games/ghost-of-tsushima.png",
-  "/games/godofwar_cover_1786239735349.png",
-  "/games/spiderman_cover_1786239765180.png",
-  "/games/resident-evil-4.png",
-  "/games/sekiro.png",
-  "/games/horizon-forbidden-west.png",
-  "/games/elden-ring.png",
-  "/games/rdr_cover_1786239795096.png",
-  "/games/GamesX-1.png",
-  "/spiderman.png",
-  "/batman.png",
-  ...ALL_THEME_IMAGES,
+  "/games/cards/action-1.png",
+  "/games/cards/action-2.png",
+  "/games/cards/adventure-1.png",
+  "/games/cards/adventure-2.png",
+  "/games/cards/rpg-1.png",
+  "/games/cards/rpg-2.png",
+  "/games/cards/racing-1.png",
+  "/games/cards/racing-2.png",
+  "/games/cards/shooter-1.png",
+  "/games/cards/shooter-2.png",
+  "/games/cards/strategy-1.png",
+  "/games/cards/strategy-2.png",
+  "/games/cards/sports-1.png",
+  "/games/cards/sports-2.png",
+  "/games/cards/puzzle-1.png",
+  "/games/cards/puzzle-2.png",
+  "/games/cards/fantasy-1.png",
+  "/games/cards/fantasy-2.png",
+  "/games/cards/scifi-1.png",
+  "/games/cards/scifi-2.png",
+  "/games/cards/horror-1.png",
+  "/games/cards/horror-2.png",
 ] as const;
 
 export function stableHash(value: string): number {
@@ -125,17 +121,6 @@ function normalizeGenre(genre?: string | string[] | null): string[] {
   return (Array.isArray(genre) ? genre : [genre])
     .map((value) => value.trim().toLowerCase())
     .filter(Boolean);
-}
-
-function matchFamousTitle(title?: string): string | null {
-  if (!title) return null;
-  const lower = title.toLowerCase();
-  for (const entry of FAMOUS_TITLES) {
-    if (entry.keywords.some((keyword) => lower.includes(keyword))) {
-      return entry.path;
-    }
-  }
-  return null;
 }
 
 function matchTitleTheme(title?: string): ThemeKey | null {
@@ -166,23 +151,27 @@ export function resolveCoverImage(
   title?: string,
   genre?: string | string[] | null
 ): string {
-  const famous = matchFamousTitle(title);
-  if (famous) return famous;
-
   const theme = resolveTheme(title, genre);
   if (theme) {
     return pickFrom(THEME_PACKS[theme], productId || title || theme);
   }
 
   if (productId) {
-    return pickFrom(ALL_THEME_IMAGES, productId);
+    return pickFrom([...LOCAL_GAME_IMAGES], productId);
   }
 
   if (title) {
-    return pickFrom(ALL_THEME_IMAGES, title);
+    return pickFrom([...LOCAL_GAME_IMAGES], title);
   }
 
   return FALLBACK_GAME_IMAGE;
+}
+
+export function resolveHeroImage(
+  _backgroundImage?: string | null,
+  index = 0
+): string {
+  return LOCAL_HERO_IMAGES[Math.abs(index) % LOCAL_HERO_IMAGES.length];
 }
 
 export function getGameImageById(productId: string, title?: string, genre?: string | string[] | null): string {
@@ -190,10 +179,8 @@ export function getGameImageById(productId: string, title?: string, genre?: stri
 }
 
 export function getGameImage(title: string, index: number, genre?: string | string[] | null): string {
-  const famous = matchFamousTitle(title);
-  if (famous) return famous;
   const theme = resolveTheme(title, genre);
-  const pool = theme ? THEME_PACKS[theme] : ALL_THEME_IMAGES;
+  const pool = theme ? THEME_PACKS[theme] : [...LOCAL_GAME_IMAGES];
   return pool[Math.abs(index) % pool.length] ?? FALLBACK_GAME_IMAGE;
 }
 
@@ -218,12 +205,21 @@ export function getGameThumbnails(
 ): string[] {
   const mainImage = resolveCoverImage(null, productId, title, genre);
   const theme = resolveTheme(title, genre);
-  const pool = (theme ? THEME_PACKS[theme] : ALL_THEME_IMAGES).filter((image) => image !== mainImage);
   const thumbs = [mainImage];
-  const start = stableHash(productId || title || "gamex") % Math.max(pool.length, 1);
 
-  for (let i = 0; i < pool.length && thumbs.length < 4; i += 1) {
-    thumbs.push(pool[(start + i) % pool.length]);
+  // A theme pack only holds two artworks, so its sibling goes in first and the
+  // rest of the library backfills the remaining slots.
+  const themeSiblings = (theme ? THEME_PACKS[theme] : []).filter((image) => image !== mainImage);
+  for (const image of themeSiblings) {
+    if (thumbs.length >= 6) break;
+    thumbs.push(image);
+  }
+
+  const rest = LOCAL_GAME_IMAGES.filter((image) => !thumbs.includes(image));
+  const start = stableHash(productId || title || "gamex") % Math.max(rest.length, 1);
+
+  for (let i = 0; i < rest.length && thumbs.length < 6; i += 1) {
+    thumbs.push(rest[(start + i) % rest.length]);
   }
 
   return thumbs;
