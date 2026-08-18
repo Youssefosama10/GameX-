@@ -335,12 +335,12 @@ export default async function StatsPage() {
             <tbody>
               {(dashboardStats?.latestOrders ?? []).slice(0, 8).map((order) => (
                 <tr key={order.id}>
-                  <td>{order.orderNumber || order.id.slice(-8)}</td>
-                  <td>{order.user ? `${order.user.firstName ?? ""} ${order.user.lastName ?? ""}` : "Customer"}</td>
-                  <td>{order.items?.length ?? 0}</td>
-                  <td>{formatMoney(order.total)}</td>
-                  <td>{order.status || "pending"}</td>
-                  <td>{formatDate(order.createdAt)}</td>
+                  <td data-label="Order ID">{order.orderNumber || order.id.slice(-8)}</td>
+                  <td data-label="Customer">{order.user ? `${order.user.firstName ?? ""} ${order.user.lastName ?? ""}` : "Customer"}</td>
+                  <td data-label="Items">{order.items?.length ?? 0}</td>
+                  <td data-label="Total">{formatMoney(order.total)}</td>
+                  <td data-label="Status">{order.status || "pending"}</td>
+                  <td data-label="Date">{formatDate(order.createdAt)}</td>
                 </tr>
               ))}
             </tbody>
@@ -594,7 +594,7 @@ export default async function StatsPage() {
           font-size: 13px;
           font-weight: 700;
         }
-        .so-table-wrap { overflow-x: auto; }
+        .so-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .so-table { width: 100%; border-collapse: collapse; }
         .so-table th, .so-table td { text-align: left; padding: 10px 12px; font-size: 12px; }
         .so-table th { color: #6b7280; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.06); }
@@ -634,6 +634,34 @@ export default async function StatsPage() {
           .so-metrics { grid-template-columns: 1fr; }
           .so-user { flex-wrap: wrap; }
           .so-user__when { width: 100%; flex-direction: row; justify-content: space-between; padding-left: 46px; }
+          .so-table-wrap { overflow-x: visible; }
+          .so-table thead { display: none; }
+          .so-table tbody { display: flex; flex-direction: column; gap: 12px; }
+          .so-table tr {
+            display: block;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            padding: 4px 14px 10px;
+          }
+          .so-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            text-align: right;
+          }
+          .so-table td:last-child { border-bottom: none; }
+          .so-table td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            font-size: 12px;
+            color: #9ca3af;
+            text-align: left;
+            flex-shrink: 0;
+          }
         }
       `}</style>
     </div>

@@ -86,7 +86,6 @@ export default function Navbar() {
   const userName = session?.user?.name ?? "";
   const userEmail = session?.user?.email ?? "";
   const avatarSrc = isAdmin ? ADMIN_PROFILE_AVATAR : USER_PROFILE_AVATAR;
-  const initials = userName ? userName.slice(0, 2).toUpperCase() : "G";
 
   const { cartCount, wishlistCount } = useAppCounts();
 
@@ -378,7 +377,15 @@ export default function Navbar() {
         {isAuthenticated && (
           <div className="nb-mobile__user">
             <div className="nb-mobile__user-info">
-              <div className="nb-user-initials">{initials}</div>
+              <div className="nb-mobile__avatar">
+                <Image
+                  src={avatarSrc}
+                  alt={userName}
+                  width={40}
+                  height={40}
+                  className="nb-user-btn__img"
+                />
+              </div>
               <div>
                 <div className="nb-dropdown__username">{userName}</div>
                 <div className="nb-dropdown__email">{userEmail}</div>
@@ -868,6 +875,15 @@ export default function Navbar() {
           display: flex;
           align-items: center;
           gap: 10px;
+        }
+        .nb-mobile__avatar {
+          position: relative;
+          width: 40px;
+          height: 40px;
+          flex-shrink: 0;
+          border-radius: 50%;
+          overflow: hidden;
+          border: 1.5px solid rgba(139, 92, 246, 0.3);
         }
         .nb-user-initials {
           width: 40px;

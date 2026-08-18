@@ -38,15 +38,15 @@ export default async function OrdersPage({
               <tbody>
                 {orders.map((order) => (
                   <tr key={order.id}>
-                    <td>{order.orderNumber || order.id.slice(-8)}</td>
-                    <td>{formatDate(order.createdAt)}</td>
-                    <td>
+                    <td data-label="Order">{order.orderNumber || order.id.slice(-8)}</td>
+                    <td data-label="Date">{formatDate(order.createdAt)}</td>
+                    <td data-label="Status">
                       <span className={`gx-status gx-status--${order.status || "pending"}`}>
                         {order.status || "pending"}
                       </span>
                     </td>
-                    <td>{formatMoney(order.total)}</td>
-                    <td>
+                    <td data-label="Total">{formatMoney(order.total)}</td>
+                    <td data-label="Actions">
                       <Link href={`/orders/${order.id}`} className="text-violet-400">
                         View
                       </Link>

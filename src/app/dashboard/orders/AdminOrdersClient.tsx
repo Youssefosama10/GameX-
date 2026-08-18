@@ -76,14 +76,14 @@ export default function AdminOrdersClient({
           <tbody>
             {orders.map((order) => (
               <tr key={order.id}>
-                <td>
+                <td data-label="Order">
                   <Link href={`/dashboard/orders/${order.id}`} className="text-violet-400">
                     {order.orderNumber || order.id.slice(-8)}
                   </Link>
                 </td>
-                <td>{order.user ? `${order.user.firstName ?? ""} ${order.user.lastName ?? ""}` : "—"}</td>
-                <td>{formatMoney(order.total)}</td>
-                <td>
+                <td data-label="Customer">{order.user ? `${order.user.firstName ?? ""} ${order.user.lastName ?? ""}` : "—"}</td>
+                <td data-label="Total">{formatMoney(order.total)}</td>
+                <td data-label="Status">
                   <select
                     value={order.status || "pending"}
                     disabled={pendingId === order.id}
@@ -95,24 +95,26 @@ export default function AdminOrdersClient({
                     ))}
                   </select>
                 </td>
-                <td>{formatDate(order.createdAt)}</td>
-                <td className="flex gap-2">
-                  <button
-                    type="button"
-                    className="gx-btn gx-btn--ghost"
-                    disabled={pendingId === order.id}
-                    onClick={() => run(order.id, () => CancelOrderAction(order.id))}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    className="gx-btn gx-btn--ghost"
-                    disabled={pendingId === order.id}
-                    onClick={() => run(order.id, () => RefundOrderAction(order.id))}
-                  >
-                    Refund
-                  </button>
+                <td data-label="Date">{formatDate(order.createdAt)}</td>
+                <td data-label="Actions">
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      className="gx-btn gx-btn--ghost"
+                      disabled={pendingId === order.id}
+                      onClick={() => run(order.id, () => CancelOrderAction(order.id))}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="gx-btn gx-btn--ghost"
+                      disabled={pendingId === order.id}
+                      onClick={() => run(order.id, () => RefundOrderAction(order.id))}
+                    >
+                      Refund
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -121,7 +123,7 @@ export default function AdminOrdersClient({
         {!orders.length ? <p className="p-6 text-zinc-400">No orders found.</p> : null}
       </div>
 
-      <div className="flex justify-between text-sm text-zinc-400">
+      <div className="dash-pagination flex flex-col gap-2 text-sm text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
         <span>Page {page} of {totalPages}</span>
         <div className="flex gap-2">
           {page > 1 ? <button type="button" onClick={() => router.push(`/dashboard/orders?page=${page - 1}`)}>Previous</button> : null}

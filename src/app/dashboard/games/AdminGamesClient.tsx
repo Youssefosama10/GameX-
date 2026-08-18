@@ -46,7 +46,7 @@ export default function AdminGamesClient({
 
   return (
     <>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-3 dash-filter-bar">
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
@@ -82,7 +82,7 @@ export default function AdminGamesClient({
           <tbody>
             {games.map((game) => (
               <tr key={game.id}>
-                <td>
+                <td data-label="Title">
                   <Link href={`/dashboard/games/${game.id}`} className="flex items-center gap-3 text-violet-400">
                     <img
                       src={resolveCoverImage(null, game.id, game.title, game.genre)}
@@ -94,29 +94,31 @@ export default function AdminGamesClient({
                     {game.title}
                   </Link>
                 </td>
-                <td>{formatMoney(game.finalPrice ?? game.price)}</td>
-                <td>{game.stock ?? "—"}</td>
-                <td>{game.isDeleted ? "Deleted" : game.isOutOfStock ? "Out of stock" : "Active"}</td>
-                <td className="flex gap-2">
-                  {game.isDeleted ? (
-                    <button
-                      type="button"
-                      className="gx-btn gx-btn--ghost"
-                      disabled={pendingId === game.id}
-                      onClick={() => run(game.id, () => RestoreAdminGameAction(game.id))}
-                    >
-                      {pendingId === game.id ? "Working..." : "Restore"}
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      className="gx-btn gx-btn--ghost"
-                      disabled={pendingId === game.id}
-                      onClick={() => run(game.id, () => DeleteAdminGameAction(game.id))}
-                    >
-                      {pendingId === game.id ? "Working..." : "Delete"}
-                    </button>
-                  )}
+                <td data-label="Price">{formatMoney(game.finalPrice ?? game.price)}</td>
+                <td data-label="Stock">{game.stock ?? "—"}</td>
+                <td data-label="Status">{game.isDeleted ? "Deleted" : game.isOutOfStock ? "Out of stock" : "Active"}</td>
+                <td data-label="Actions">
+                  <div className="flex flex-wrap gap-2">
+                    {game.isDeleted ? (
+                      <button
+                        type="button"
+                        className="gx-btn gx-btn--ghost"
+                        disabled={pendingId === game.id}
+                        onClick={() => run(game.id, () => RestoreAdminGameAction(game.id))}
+                      >
+                        {pendingId === game.id ? "Working..." : "Restore"}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="gx-btn gx-btn--ghost"
+                        disabled={pendingId === game.id}
+                        onClick={() => run(game.id, () => DeleteAdminGameAction(game.id))}
+                      >
+                        {pendingId === game.id ? "Working..." : "Delete"}
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -124,7 +126,7 @@ export default function AdminGamesClient({
         </table>
         {!games.length ? <p className="p-6 text-zinc-400">No games found.</p> : null}
       </div>
-      <div className="flex justify-between text-sm text-zinc-400">
+      <div className="dash-pagination flex flex-col gap-2 text-sm text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
         <span>Page {page} of {totalPages}</span>
         <div className="flex gap-2">
           {page > 1 ? <button type="button" onClick={() => router.push(`/dashboard/games?page=${page - 1}`)}>Previous</button> : null}

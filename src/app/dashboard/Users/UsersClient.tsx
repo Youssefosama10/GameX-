@@ -84,7 +84,7 @@ export default function UsersClient({
 
       </div>
 
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-3 dash-filter-bar">
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
@@ -120,12 +120,12 @@ export default function UsersClient({
           <tbody>
             {users.map((user) => (
               <tr key={user._id}>
-                <td>
+                <td data-label="User">
                   <p className="font-bold text-white">{user.firstName} {user.lastName}</p>
                   <p className="text-xs text-zinc-500">{user.username}</p>
                 </td>
-                <td>{user.email}</td>
-                <td>
+                <td data-label="Email">{user.email}</td>
+                <td data-label="Role">
                   <select
                     defaultValue={user.role}
                     disabled={pendingId === user._id}
@@ -136,13 +136,13 @@ export default function UsersClient({
                     <option value="admin">admin</option>
                   </select>
                 </td>
-                <td>
+                <td data-label="Status">
                   <span className={`gx-status ${user.isBlocked ? "gx-status--blocked" : "gx-status--active"}`}>
                     {user.isBlocked ? "Blocked" : "Active"}
                   </span>
                 </td>
-                <td>{formatDate(user.createdAt)}</td>
-                <td>
+                <td data-label="Joined">{formatDate(user.createdAt)}</td>
+                <td data-label="Actions">
                   <div className="flex gap-2">
                     <button
                       type="button"
@@ -171,7 +171,7 @@ export default function UsersClient({
         </table>
       </div>
 
-      <div className="flex justify-between text-sm text-zinc-400">
+      <div className="dash-pagination flex flex-col gap-2 text-sm text-zinc-400 sm:flex-row sm:items-center sm:justify-between">
         <span>Page {page} of {totalPages}</span>
         <div className="flex gap-2">
           {page > 1 ? (

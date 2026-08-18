@@ -15,12 +15,12 @@ export default async function AdminGamesPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex justify-between gap-4">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-[28px] font-extrabold text-white">Games</h1>
           <p className="text-sm text-zinc-400">Create, update, archive, and restore catalog titles.</p>
         </div>
-        <Link href="/dashboard/games/new" className="gx-btn px-4! gx-btn--primary">
+        <Link href="/dashboard/games/new" className="gx-btn px-4! gx-btn--primary shrink-0">
           Add game
         </Link>
       </div>
