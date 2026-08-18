@@ -101,15 +101,14 @@ export default function LoginForm() {
   return (
     <>
 <form id="register-form" onSubmit={handleSubmit(MyhandleSubmit)} noValidate>
-              <div className="form-row">
-                <div className="form-group">
+              <div className="form-group">
                   <label htmlFor="email" className="form-label">Email Address</label>
                   <div className="input-wrap">
                     <span className="input-icon"><IconMail /></span>
                     <input
                       id="email"
                       type="email"
-                      className="form-input w-[710px]!"
+                      className="form-input"
                       placeholder="Enter your email"
                       autoComplete="email"
                       {...register("email")}
@@ -117,7 +116,6 @@ export default function LoginForm() {
                   </div>
               { formState.errors.email && formState.touchedFields.email && <p className='text-red-500'>{formState.errors.email.message}</p> }
                 </div>
-              </div>
               <div className="form-group">
                 <label htmlFor="password" className="form-label">Password</label>
                 <div className="input-wrap">

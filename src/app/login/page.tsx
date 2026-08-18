@@ -94,6 +94,7 @@ export default function LoginPage() {
               className="hero-image"
               priority
               sizes="(max-width: 900px) 100vw, 50vw"
+              style={{ objectFit: "cover", objectPosition: "top center" }}
             />
             <div className="hero-overlay" />
 

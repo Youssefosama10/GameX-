@@ -32,7 +32,9 @@ export const metadata: Metadata = {
   title: "GameX — Your Ultimate Gaming Store",
   description: "Discover, buy and track your games on GameX — the ultimate digital gaming marketplace.",
   icons: {
-    icon: "/games/img-X.png",
+    icon: "/icon-gx.png",
+    shortcut: "/icon-gx.png",
+    apple: "/icon-gx.png",
   },
 };
 

@@ -36,10 +36,12 @@ export default function Hero() {
             <Image
               src={image}
               alt={SLIDE_ALT[image] ?? ""}
-              fill
+              width={2172}
+              height={724}
               priority={slideIndex === 0}
               className="gx-hero__image"
               sizes="100vw"
+              style={{ width: "100%", height: "auto" }}
             />
           </div>
         ))}
@@ -49,17 +51,6 @@ export default function Hero() {
             <button type="button" onClick={() => setIndex((index - 1 + slides.length) % slides.length)} aria-label="Previous banner">
               ‹
             </button>
-            <div className="gx-hero__dots">
-              {slides.map((image, slideIndex) => (
-                <button
-                  key={image}
-                  type="button"
-                  className={slideIndex === index ? "is-active" : ""}
-                  onClick={() => setIndex(slideIndex)}
-                  aria-label={`Go to slide ${slideIndex + 1}`}
-                />
-              ))}
-            </div>
             <button type="button" onClick={() => setIndex((index + 1) % slides.length)} aria-label="Next banner">
               ›
             </button>

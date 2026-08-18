@@ -113,6 +113,15 @@ export default function Navbar() {
     setMobileOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileOpen]);
+
   async function handleLogout() {
     setDropdownOpen(false);
     await signOut({ redirect: false });
@@ -288,89 +297,107 @@ export default function Navbar() {
               className="nb-hamburger"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle menu"
+              aria-expanded={mobileOpen}
             >
               {mobileOpen ? <CloseIcon /> : <MenuIcon />}
             </button>
           </div>
         </div>
-
-        {/* ── Mobile Menu ── */}
-        <div className={`nb-mobile ${mobileOpen ? "nb-mobile--open" : ""}`}>
-          {/* Mobile Search */}
-          <form
-            className="nb-mobile__search"
-            onSubmit={(event) => {
-              event.preventDefault();
-              router.push(`/games?search=${encodeURIComponent(search)}`);
-            }}
-          >
-            <span className="nb-search__icon"><SearchIcon /></span>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              type="text"
-              placeholder="Search games..."
-              className="nb-search__input"
-            />
-          </form>
-
-          {/* Mobile Nav */}
-          <nav className="nb-mobile__nav">
-            {NAV_LINKS.map(({ href, label }) => {
-              const isActive = pathname === href || (href !== "/" && pathname.startsWith(href));
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={`nb-mobile__link ${isActive ? "nb-mobile__link--active" : ""}`}
-                >
-                  {label}
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* Mobile Auth */}
-          {!isAuthenticated && (
-            <div className="nb-mobile__auth">
-              <Link href="/login" className="nb-auth-btn nb-auth-btn--ghost" style={{ flex: 1, textAlign: "center" }}>
-                Sign In
-              </Link>
-              <Link href="/register" className="nb-auth-btn nb-auth-btn--solid" style={{ flex: 1, textAlign: "center" }}>
-                Sign Up
-              </Link>
-            </div>
-          )}
-
-          {isAuthenticated && (
-            <div className="nb-mobile__user">
-              <div className="nb-mobile__user-info">
-                <div className="nb-user-initials">{initials}</div>
-                <div>
-                  <div className="nb-dropdown__username">{userName}</div>
-                  <div className="nb-dropdown__email">{userEmail}</div>
-                </div>
-              </div>
-              <button className="nb-mobile__logout" onClick={handleLogout}>
-                <LogoutIcon />
-                Sign Out
-              </button>
-            </div>
-          )}
-        </div>
       </header>
 
-      {/* ── Overlay for mobile ── */}
-      {mobileOpen && (
+      {mobileOpen ? (
         <div className="nb-overlay" onClick={() => setMobileOpen(false)} />
-      )}
+      ) : null}
+
+      <div
+        className={`nb-mobile ${mobileOpen ? "nb-mobile--open" : ""}`}
+        id="mobile-nav"
+        aria-hidden={!mobileOpen}
+      >
+        <form
+          className="nb-mobile__search"
+          onSubmit={(event) => {
+            event.preventDefault();
+            router.push(`/games?search=${encodeURIComponent(search)}`);
+          }}
+        >
+          <span className="nb-search__icon"><SearchIcon /></span>
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            type="text"
+            placeholder="Search games..."
+            className="nb-search__input"
+          />
+        </form>
+
+        <nav className="nb-mobile__nav">
+          {NAV_LINKS.map(({ href, label }) => {
+            const isActive = pathname === href || (href !== "/" && pathname.startsWith(href));
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={`nb-mobile__link ${isActive ? "nb-mobile__link--active" : ""}`}
+              >
+                {label}
+              </Link>
+            );
+          })}
+          {isAuthenticated ? (
+            <>
+              <Link href="/profile" className={`nb-mobile__link ${pathname.startsWith("/profile") ? "nb-mobile__link--active" : ""}`}>
+                My Profile
+              </Link>
+              <Link href="/orders" className={`nb-mobile__link ${pathname.startsWith("/orders") ? "nb-mobile__link--active" : ""}`}>
+                My Orders
+              </Link>
+              <Link href="/library" className={`nb-mobile__link ${pathname.startsWith("/library") ? "nb-mobile__link--active" : ""}`}>
+                Library
+              </Link>
+              {isAdmin ? (
+                <Link href="/dashboard" className={`nb-mobile__link ${pathname.startsWith("/dashboard") ? "nb-mobile__link--active" : ""}`}>
+                  Admin Dashboard
+                </Link>
+              ) : null}
+            </>
+          ) : null}
+        </nav>
+
+        {!isAuthenticated && (
+          <div className="nb-mobile__auth">
+            <Link href="/login" className="nb-auth-btn nb-auth-btn--ghost" style={{ flex: 1, textAlign: "center" }}>
+              Sign In
+            </Link>
+            <Link href="/register" className="nb-auth-btn nb-auth-btn--solid" style={{ flex: 1, textAlign: "center" }}>
+              Sign Up
+            </Link>
+          </div>
+        )}
+
+        {isAuthenticated && (
+          <div className="nb-mobile__user">
+            <div className="nb-mobile__user-info">
+              <div className="nb-user-initials">{initials}</div>
+              <div>
+                <div className="nb-dropdown__username">{userName}</div>
+                <div className="nb-dropdown__email">{userEmail}</div>
+              </div>
+            </div>
+            <button className="nb-mobile__logout" onClick={handleLogout}>
+              <LogoutIcon />
+              Sign Out
+            </button>
+          </div>
+        )}
+      </div>
 
       <style>{`
         /* ═══ Base ═══ */
         .nb-header {
           position: sticky;
           top: 0;
-          z-index: 100;
+          z-index: 220;
           width: 100%;
           height: 68px;
           background: rgba(9, 7, 19, 0.85);
@@ -668,7 +695,7 @@ export default function Navbar() {
           box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255,255,255,0.03);
           overflow: hidden;
           animation: dropDown 0.18s ease;
-          z-index: 200;
+          z-index: 230;
         }
         @keyframes dropDown {
           from { opacity: 0; transform: translateY(-6px) scale(0.98); }
@@ -766,7 +793,7 @@ export default function Navbar() {
         /* ═══ Mobile Menu ═══ */
         .nb-mobile {
           position: fixed;
-          top: 62px;
+          top: 68px;
           left: 0;
           right: 0;
           bottom: 0;
@@ -774,8 +801,10 @@ export default function Navbar() {
           border-top: 1px solid rgba(139, 92, 246, 0.1);
           transform: translateX(-100%);
           opacity: 0;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          z-index: 99;
+          visibility: hidden;
+          pointer-events: none;
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, visibility 0.3s ease;
+          z-index: 210;
           overflow-y: auto;
           padding: 20px;
           display: flex;
@@ -785,6 +814,8 @@ export default function Navbar() {
         .nb-mobile--open {
           transform: translateX(0);
           opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
         }
         .nb-mobile__search {
           display: flex;
@@ -875,8 +906,8 @@ export default function Navbar() {
         .nb-overlay {
           position: fixed;
           inset: 0;
-          z-index: 98;
-          background: rgba(0,0,0,0.5);
+          z-index: 200;
+          background: rgba(0,0,0,0.55);
           backdrop-filter: blur(4px);
           animation: fadeIn 0.2s ease;
         }
@@ -887,12 +918,22 @@ export default function Navbar() {
           .nb-nav { display: none; }
           .nb-search { display: none; }
           .nb-auth-btns { display: none; }
+          .nb-dropdown { display: none; }
           .nb-hamburger { display: flex; }
+          .nb-user-btn__name { display: none; }
+          .nb-user-btn { padding: 4px; }
+        }
+
+        @media (min-width: 1151px) {
+          .nb-mobile,
+          .nb-overlay { display: none !important; }
         }
 
         @media (max-width: 520px) {
-          .nb-inner { padding: 0 16px; gap: 12px; }
+          .nb-inner { padding: 0 16px; gap: 8px; }
           .nb-logo__text { font-size: 18px; }
+          .nb-actions { gap: 4px; }
+          .nb-icon-btn { width: 34px; height: 34px; }
         }
       `}</style>
     </>
